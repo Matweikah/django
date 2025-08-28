@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Каталог товаров - Страница {{ products.number }}{% endblock %}
+
+{% block content %}
+<h2>Каталог товаров</h2>
+
+<!-- Форма поиска -->
+<form method="get" action="{% url 'product_list' %}" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Поиск по названию..." value="{{ request.GET.search }}">
+    <button type="submit">🔍 Найти</button>
+</form>
+
+<!-- Информация о странице -->
+<p>Страница {{ products.number }} из {{ products.paginator.num_pages }}</p>
+<p>Всего товаров: {{ products.paginator.count }}</p>
+
+<div class="products">
+    {% for product in products %}
+<div class="product-card">
+    <h3>{{ product.POLN }}</h3>
+    
+    {% if product.ISKIZ %}
+        <img src="{{ product.ISKIZ.url }}" alt="{{ product.ID }}" 
+             style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 5px;">
+    {% else %}
+        <div style="width: 100%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+            <span>Нет фото</span>
+        </div>
+    {% endif %}
+    
+    <p class="price">Цена: {{ product.SREDN }} руб.</p>
+    <p>Артикул: {{ product.SLITN }}</p>
+    <a href="{% url 'product_detail' product.ID %}">Подробнее</a>
+</div>
+{% endfor %}
+</div>
+
+<!-- Пагинация -->
+<div class="pagination" style="margin-top: 30px; text-align: center;">
+    <span class="step-links">
+        {% if products.has_previous %}
+            <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ddd; text-decoration: none;">« Первая</a>
+            <a href="?page={{ products.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ddd; text-decoration: none;">‹ Назад</a>
+        {% endif %}
+
+        <span class="current" style="margin: 0 10px;">
+            Страница {{ products.number }} из {{ products.paginator.num_pages }}
+        </span>
+
+        {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ddd; text-decoration: none;">Вперед ›</a>
+            <a href="?page={{ products.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ddd; text-decoration: none;">Последняя »</a>
+        {% endif %}
+    </span>
+</div>
+
+<!-- Переход по страницам -->
+<div style="text-align: center; margin-top: 15px;">
+    {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+            <span style="margin: 0 5px; padding: 5px 10px; background: #3498db; color: white; border-radius: 3px;">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ddd; text-decoration: none; border-radius: 3px;">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

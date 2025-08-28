@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.POLN }}{% endblock %}
+
+{% block content %}
+<style>
+.cart-button {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.cart-button:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.cart-button:active {
+    transform: scale(0.95);
+}
+
+.actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.offers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.offers-table th {
+    background: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.offers-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.offers-table tr:hover {
+    background: #f8f9fa;
+}
+
+
+
+
+.best-price td {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.price-offers {
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+</style>
+<div class="product-detail">
+    <h2>{{ product.POLN }}</h2>
+    
+    {% if product.ISKIZ %}
+    <img src="{{ product.ISKIZ.url }}" alt="{{ product.POLN }}" 
+         style="max-width: 100%; max-height: 400px; border-radius: 8px;">
+{% else %}
+    <div style="width: 400px; height: 300px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+        <span>Изображение отсутствует</span>
+    </div>
+{% endif %}
+    
+    <div class="details">
+        <p><strong>Артикул:</strong> {{ product.SLITN }}</p>
+        <p><strong>Производитель:</strong> {{ product.FIRMA }}</p>
+        <p><strong>Цена:</strong> <span class="price">{{ product.SREDN }} руб.</span></p>
+        <p><strong>Описание:</strong> {{ product.OSNOVA }}</p>
+        <p><strong>Аналог:</strong> {{ product.ANALOG }}</p>
+        <p><strong>ГОСТ:</strong> {{ product.GOST }}</p>
+        <p><strong>Материал:</strong> {{ product.STEEL }}</p>
+        <p><strong>Завод:</strong> {{ product.ZAVODS }}</p>
+    </div>
+
+    <a href="{% url 'product_list' %}">← Назад к каталогу</a>
+</div>
+{% if price_offers %}
+<section class="price-offers">
+    <h2>Предложения цен ({{ total_offers }})</h2>
+    
+    <table class="offers-table">
+        <thead>
+            <tr>
+                <th>Поставщик</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Резерв</th>
+                <th>Доступно</th>
+                <th style="text-align: center;">В корзину</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller, seller_offers in offers_by_seller.items %}
+            {% for offer in seller_offers %}
+            <tr class="{% if offer.cena == min_price %}best-price{% endif %}">
+                <td>{{ offer.sales }}</td>
+                <td><strong>{{ offer.cena }} руб.</strong></td>
+                <td>{{ offer.kolwo }} шт.</td>
+                <td>{{ offer.reserv }} шт.</td>
+                <td>{{ offer.kolwo|add:offer.reserv }} шт.</td>
+                <td class="actions-cell">
+                    <button class="cart-button" 
+                            onclick="addToCart({{ product.ID }}, '{{ offer.sales }}', {{ offer.cena }}, {{ offer.kolwo }})"
+                            title="Добавить в корзину">
+                        +
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% else %}
+<p style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    Нет предложений цен для этого товара
+</p>
+{% endif %}
+<script>
+function addToCart(productId, seller, price, quantity) {
+    // Здесь будет логика добавления в корзину
+    console.log('Добавляем в корзину:', {
+        productId: productId,
+        seller: seller,
+        price: price,
+        quantity: quantity
+    });
+    
+    // Анимация кнопки
+    const button = event.target;
+    button.style.background = 'linear-gradient(45deg, #2ecc71, #27ae60)';
+    button.innerHTML = '✓';
+    
+    setTimeout(() => {
+        button.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+        button.innerHTML = '+';
+        
+        // Можно добавить уведомление
+        alert(`Товар от ${seller} за ${price} руб. добавлен в корзину!`);
+    }, 500);
+}
+
+// Дополнительные функции для работы с корзиной
+function updateCartCounter() {
+    // Обновление счетчика корзины
+}
+
+function showCartNotification() {
+    // Показать уведомление
+}
+</script>
+{% endblock %}

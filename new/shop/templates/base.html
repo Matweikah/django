@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин подшипников{% endblock %}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .header { 
+            background: #ACE302; 
+            color: white; 
+            padding: 20px; 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .products { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            margin-top: 20px;
+        }
+        .product-card { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 5px;
+            background: white;
+        }
+        .price { 
+            color: #e74c3c; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+        }
+        .navigation { 
+            margin: 20px 0; 
+            text-align: center;
+        }
+        .navigation a { 
+            margin-right: 15px; 
+            text-decoration: none; 
+            color: #3498db;
+            font-weight: bold;
+        }
+        .navigation a:hover {
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo.png" alt="Логотип" style="height: 50px; vertical-align: middle;">
+    </div>
+
+    <div class="container">
+        <div class="navigation">
+            <a href="{% url 'product_list' %}">🏠 Главная</a>
+            <a href="/admin/">⚙️ Админка</a>
+        </div>
+
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
